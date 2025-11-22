@@ -1,60 +1,60 @@
 import logo from "@/assets/logo.png";
-import iceButton from "@/assets/ice-button.svg";
+// Huomaa tarkat tiedostonimet välilyönteineen
+import navBg from "@/assets/HERO BANNER ICE 2.png";
+import btnBg from "@/assets/DOWNLOAD APP.png";
 
 export const Navbar = () => {
   return (
-    // 'fixed' pitää elementin paikallaan suhteessa ruutuun.
-    // 'top-6' jättää pienen välin yläreunaan.
-    // 'z-50' varmistaa, että se on muiden elementtien päällä.
-    <nav className="fixed left-1/2 top-6 z-50 -translate-x-1/2 w-[95%] max-w-6xl">
-      {/* Bannerin tausta ja reunat */}
-      <div
-        className="
-        relative flex items-center justify-between 
-        rounded-full px-8 py-4 
-        bg-white/5 backdrop-blur-xl 
-        border border-white/10 
-        shadow-[0_0_30px_rgba(8,145,178,0.3)]
-      "
-      >
-        {/* 1. VASEN PUOLI: LOGO JA OTSIKKO */}
-        <div className="flex items-center gap-4 shrink-0">
-          <img src={logo} alt="BrainFreeze Logo" className="h-16 w-16 object-cover" />
-
-          <div className="text-2xl font-bold tracking-wide flex flex-col md:block leading-tight">
-            <span className="text-white drop-shadow-sm">Brain</span>
-            <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] ml-0 md:ml-1">Freeze</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full pt-6 px-4 md:px-12">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        
+        {/* 1. VASEN: LOGO */}
+        <div className="flex items-center gap-3">
+          <img 
+            src={logo} 
+            alt="BrainFreeze Logo" 
+            className="h-12 w-12 md:h-16 md:w-16 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]" 
+          />
+          <div className="hidden md:block text-2xl font-bold tracking-wide leading-tight">
+            <span className="text-white">Brain</span>
+            <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">Freeze</span>
           </div>
         </div>
 
-        {/* 2. KESKIKOHTA: LINKIT */}
-        <div className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          {["HOME", "ABOUT", "SERVICES", "CONTACT"].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="
-                text-sm font-bold text-cyan-100/70 uppercase tracking-wider
-                transition-all duration-300
-                hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]
-              "
-            >
-              {item}
-            </a>
-          ))}
+        {/* 2. KESKI: NAVIGAATIO (Jäätanko-tausta) */}
+        <div 
+          className="absolute left-1/2 top-6 -translate-x-1/2 hidden md:flex items-center justify-center px-12 h-[65px] bg-center bg-no-repeat bg-contain"
+          style={{ backgroundImage: `url("${navBg}")`, width: '500px' }}
+        >
+          {/* Linkit nostettu hieman ylös (pb-2) jotta ne osuvat jään keskelle */}
+          <div className="flex items-center gap-10 pb-3">
+            {["Home", "About", "Services", "Contact"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="
+                  text-sm font-bold text-cyan-50 uppercase tracking-widest
+                  transition-all duration-300 
+                  hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,1)]
+                  shadow-black drop-shadow-sm
+                "
+              >
+                {item}
+              </a>
+            ))}
+          </div>
         </div>
 
-        {/* 3. OIKEA PUOLI: ACTION NAPPI */}
-        <div className="shrink-0">
-          <button
-            className="ice-download"
-            style={{ backgroundImage: `url(${iceButton})` }}
-            aria-label="Download now"
-            type="button"
-          >
-            <span className="ice-download__label">DOWNLOAD NOW</span>
-          </button>
-        </div>
+        {/* 3. OIKEA: BUTTON (Jäinen nappi) */}
+        <button
+          className="relative group w-[200px] h-[70px] flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95"
+          style={{ backgroundImage: `url("${btnBg}")` }}
+        >
+          {/* Tekstiä nostettu hieman (pb-3) jotta se osuu napin keskelle */}
+          <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] pb-4 pr-2">
+            Download Now
+          </span>
+        </button>
       </div>
     </nav>
   );

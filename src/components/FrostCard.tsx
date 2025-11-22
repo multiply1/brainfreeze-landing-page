@@ -16,7 +16,7 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
       whileHover={{ scale: 1.05, boxShadow: "0 0 50px hsl(190 100% 50% / 0.4)" }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "frost-glass relative overflow-visible rounded-2xl p-8 icicle-bottom",
+        "frost-glass relative overflow-visible rounded-2xl p-8 icicle-card",
         className
       )}
     >

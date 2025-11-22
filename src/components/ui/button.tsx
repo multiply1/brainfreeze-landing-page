@@ -15,8 +15,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        frozen: "frost-glass relative overflow-visible text-foreground hover:shadow-[0_0_30px_hsl(var(--frost-glow))] hover:border-primary transition-all duration-300 after:bottom-[-25px] after:h-[25px]",
-        hero: "frost-glass relative overflow-visible text-foreground font-bold border-primary/50 hover:border-primary hover:shadow-[0_0_40px_hsl(var(--frost-glow))] transition-all duration-300 after:bottom-[-25px] after:h-[25px]",
+        frozen: "frost-glass relative overflow-visible text-foreground hover:shadow-[0_0_30px_hsl(var(--frost-glow))] hover:border-primary transition-all duration-300",
+        hero: "frost-glass relative overflow-visible text-foreground font-bold border-primary/50 hover:border-primary hover:shadow-[0_0_40px_hsl(var(--frost-glow))] transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",

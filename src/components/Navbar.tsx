@@ -1,7 +1,7 @@
 import logo from "@/assets/logo.png";
 // Huomaa tarkat tiedostonimet välilyönteineen
-import navBg from "@/assets/HERO BANNER ICE 2.png";
-import btnBg from "@/assets/DOWNLOAD APP.png";
+import navBg from "@/assets/HERO BANNER ICE 2.jpg";
+import btnBg from "@/assets/DOWNLOAD APP.jpg";
 
 export const Navbar = () => {
   return (

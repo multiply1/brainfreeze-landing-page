@@ -17,20 +17,14 @@ export const Navbar = () => {
         {/* 1. VASEN PUOLI: LOGO JA OTSIKKO */}
         <div className="flex items-center gap-3 shrink-0">
           <img src={logo} alt="BrainFreeze Logo" className="h-10 w-10 drop-shadow-[0_0_10px_rgba(34,211,238,0.6)]" />
-          <span
-            className="
-            text-2xl font-bold tracking-wide
-            bg-gradient-to-b from-white via-cyan-200 to-cyan-500
-            bg-clip-text text-transparent
-            drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]
-          "
-          >
-            BrainFreeze
-          </span>
+          {/* Korjattu teksti: Valkoinen Brain, Turkoosi Freeze */}
+          <div className="text-2xl font-bold tracking-wide">
+            <span className="text-white drop-shadow-sm">Brain</span>
+            <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">Freeze</span>
+          </div>
         </div>
 
         {/* 2. KESKIKOHTA: LINKIT */}
-        {/* hidden md:flex piilottaa mobiilissa, näkyy isommilla ruuduilla */}
         <div className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {["HOME", "ABOUT", "SERVICES", "CONTACT"].map((item) => (
             <a

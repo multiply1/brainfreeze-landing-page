@@ -15,14 +15,14 @@ export const Navbar = () => {
       "
       >
         {/* 1. VASEN PUOLI: LOGO JA OTSIKKO */}
-        <div className="flex items-center gap-3 shrink-0">
-          {/* LOGO MUOKATTU: Isompi koko (h-14 w-14) ja hehku poistettu */}
-          <img src={logo} alt="BrainFreeze Logo" className="h-14 w-14 object-contain" />
+        <div className="flex items-center gap-4 shrink-0">
+          {/* LOGO MUOKATTU: Kokoa kasvatettu (h-16 w-16) ja hohtava varjo poistettu */}
+          <img src={logo} alt="BrainFreeze Logo" className="h-16 w-16 object-contain" />
 
           {/* Teksti: Valkoinen Brain, Turkoosi Freeze */}
-          <div className="text-2xl font-bold tracking-wide">
+          <div className="text-2xl font-bold tracking-wide flex flex-col md:block leading-tight">
             <span className="text-white drop-shadow-sm">Brain</span>
-            <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">Freeze</span>
+            <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] ml-0 md:ml-1">Freeze</span>
           </div>
         </div>
 

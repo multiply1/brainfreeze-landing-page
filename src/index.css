@@ -129,4 +129,41 @@ All colors MUST be HSL.
     );
     background-size: 1000px 100%;
   }
+
+  /* Frosted ice download button */
+  .ice-download {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 230px;
+    height: 100px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    filter: drop-shadow(0 10px 30px rgba(71, 216, 255, 0.45));
+    transition: transform 0.2s ease, filter 0.25s ease;
+  }
+
+  .ice-download:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: drop-shadow(0 14px 38px rgba(99, 235, 255, 0.6));
+  }
+
+  .ice-download:active {
+    transform: translateY(0);
+    filter: drop-shadow(0 8px 26px rgba(54, 200, 240, 0.55));
+  }
+
+  .ice-download__label {
+    color: #e7f8ff;
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-shadow:
+      0 0 10px rgba(181, 243, 255, 0.9),
+      0 0 22px rgba(106, 218, 255, 0.95),
+      0 4px 12px rgba(0, 0, 0, 0.25);
+  }
 }

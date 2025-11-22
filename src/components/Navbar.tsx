@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo.png";
+import iceButton from "@/assets/ice-button.svg";
 export const Navbar = () => {
   return <nav className="fixed left-1/2 top-6 z-50 -translate-x-1/2 w-[95%] max-w-6xl">
       {/* Bannerin tausta ja reunat */}
@@ -35,16 +35,14 @@ export const Navbar = () => {
 
         {/* 3. OIKEA PUOLI: ACTION NAPPI */}
         <div className="shrink-0">
-          <Button className="
-              rounded-full px-6 py-5 font-bold text-white text-sm
-              bg-cyan-500
-              border border-cyan-300/50
-              shadow-[0_0_20px_rgba(6,182,212,0.4)]
-              hover:bg-cyan-400 hover:scale-105
-              transition-all duration-300
-            ">
-            DOWNLOAD NOW
-          </Button>
+          <button
+            className="ice-download"
+            style={{ backgroundImage: `url(${iceButton})` }}
+            aria-label="Download now"
+            type="button"
+          >
+            <span className="ice-download__label">DOWNLOAD NOW</span>
+          </button>
         </div>
       </div>
     </nav>;

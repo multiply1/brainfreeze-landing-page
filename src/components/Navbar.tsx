@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react"; // Lisätään mobiili-ikoni varmuuden vuoksi
-import logo from "@/assets/brain-ice-logo.png"; // Varmista polku
+import { Menu, Brain } from "lucide-react"; // Käytetään Brain-ikonia kuvan sijasta
 
 export const Navbar = () => {
   return (
@@ -50,16 +49,13 @@ export const Navbar = () => {
       `}</style>
 
       <nav className="ice-container relative mx-4 flex w-full max-w-6xl items-center justify-between rounded-2xl px-6 py-4 md:px-10">
-        {/* --- LOGO --- */}
+        {/* --- LOGO (KORJATTU: KÄYTTÄÄ IKONIA KUVAN SIJASTA) --- */}
         <div className="flex items-center gap-3 shrink-0 z-20">
           <div className="relative">
             {/* Glow effect behind logo */}
             <div className="absolute inset-0 bg-cyan-400/30 blur-lg rounded-full"></div>
-            <img
-              src={logo}
-              alt="BrainFreeze"
-              className="relative h-12 w-12 md:h-14 md:w-14 object-contain drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]"
-            />
+            {/* Tässä käytetään nyt Brain-ikonia, joka ei voi mennä rikki */}
+            <Brain className="relative h-10 w-10 md:h-12 md:w-12 text-cyan-100 drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]" />
           </div>
           <span className="hidden md:block text-2xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-100 to-cyan-500 drop-shadow-md">
             BrainFreeze
@@ -95,7 +91,6 @@ export const Navbar = () => {
         <div className="ice-drips"></div>
 
         {/* --- CRACKED ICE TEXTURE OVERLAY --- */}
-        {/* Tämä lisää "naarmuja" jään pintaan */}
         <div
           className="absolute inset-0 rounded-2xl opacity-20 pointer-events-none mix-blend-overlay"
           style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cracked-glass-broken.png")' }}

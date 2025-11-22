@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 // Tarkka tiedostonimi
-import cardFrame from "@/assets/BRAIN FREECE CARDS 1.png";
+import cardFrame from "@/assets/BRAIN FREECE CARDS 1.jpg";
 
 interface FrostCardProps {
   title: string;

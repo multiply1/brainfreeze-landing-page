@@ -6,8 +6,8 @@ import iceCrystals from "@/assets/ice-crystals.png";
 import temperatureGauge from "@/assets/temperature-gauge.png";
 import iceCubes from "@/assets/ice-cubes.png";
 // Tuodaan oikeat kuvatiedostot nappeja varten
-import btnBg from "@/assets/DOWNLOAD APP.png";
-import navBg from "@/assets/HERO BANNER ICE 2.png";
+import btnBg from "@/assets/DOWNLOAD APP.jpg";
+import navBg from "@/assets/HERO BANNER ICE 2.jpg";
 import { motion } from "framer-motion";
 
 const Index = () => {

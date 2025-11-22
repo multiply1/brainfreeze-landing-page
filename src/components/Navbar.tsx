@@ -12,7 +12,7 @@ export const Navbar = () => {
       ">
         {/* 1. VASEN PUOLI: LOGO JA OTSIKKO */}
         <div className="flex items-center gap-3 shrink-0">
-          <img src={logo} alt="BrainFreeze Logo" className="h-10 w-10 drop-shadow-[0_0_10px_rgba(34,211,238,0.6)] rounded-md object-fill opacity-100 shadow-md" />
+          <img src={logo} alt="BrainFreeze Logo" className="h-10 w-10 drop-shadow-[0_0_10px_rgba(34,211,238,0.6)] object-fill shadow-md opacity-100 rounded-sm" />
           {/* Korjattu teksti: Valkoinen Brain, Turkoosi Freeze */}
           <div className="text-2xl font-bold tracking-wide">
             <span className="text-white drop-shadow-sm">Brain</span>

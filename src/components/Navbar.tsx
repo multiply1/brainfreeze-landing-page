@@ -1,6 +1,6 @@
 // Varmista, että importtaat PNG:n, ET svg:tä!
 import logo from "@/assets/logo.png";
-import iceButtonBg from "@/assets/download-button-ice.png"; // Oletetaan että nimi on tämä
+import iceButtonBg from "@/assets/download button ice.png";
 
 export const Navbar = () => {
   return (
@@ -47,7 +47,7 @@ export const Navbar = () => {
             type="button"
             className="
               relative group flex items-center justify-center
-              w-[180px] h-[70px] 
+              w-[200px] h-[80px]
               bg-contain bg-center bg-no-repeat
               transition-transform active:scale-95
             "

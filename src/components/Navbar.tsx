@@ -8,7 +8,7 @@ export const Navbar = () => {
         <img src={logo} alt="BrainFreeze Logo" className="h-10 w-10" />
         <span className="text-xl font-bold text-foreground">BrainFreeze</span>
       </div>
-      
+
       <div className="flex items-center gap-6">
         <a href="#home" className="text-sm font-medium text-foreground transition-colors hover:text-primary">
           Home

@@ -6,8 +6,8 @@ import iceCrystals from "@/assets/ice-crystals.png";
 import temperatureGauge from "@/assets/temperature-gauge.png";
 import iceCubes from "@/assets/ice-cubes.png";
 // Tuodaan oikeat kuvatiedostot nappeja varten
-import btnBg from "@/assets/DOWNLOAD APP.png"; 
-import navBg from "@/assets/HERO BANNER ICE 2.png"; 
+import btnBg from "@/assets/DOWNLOAD APP.png";
+import navBg from "@/assets/HERO BANNER ICE 2.png";
 import { motion } from "framer-motion";
 
 const Index = () => {
@@ -15,29 +15,29 @@ const Index = () => {
     <div className="relative min-h-screen overflow-x-hidden font-sans text-foreground selection:bg-cyan-500/30">
       <VideoBackground />
       <Navbar />
-      
+
       {/* Main Content */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-32 pb-20 px-4">
-        
+
         {/* Hero Emblem (The Brain Cube) */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          transition={{ duration: 0.8 }} 
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
           className="mb-8 relative"
         >
-          <img 
-            src={heroEmblem} 
-            alt="BrainFreeze Emblem" 
+          <img
+            src={heroEmblem}
+            alt="BrainFreeze Emblem"
             className="w-64 h-64 md:w-80 md:h-80 object-contain animate-float drop-shadow-[0_0_50px_rgba(6,182,212,0.4)]"
           />
         </motion.div>
 
         {/* Headline */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.8, delay: 0.3 }} 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
           className="text-center mb-6"
         >
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none uppercase">
@@ -52,10 +52,10 @@ const Index = () => {
         </motion.div>
 
         {/* Sub-headline */}
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.8, delay: 0.5 }} 
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
           className="mb-16 text-center text-lg md:text-2xl text-cyan-50/90 max-w-2xl font-light tracking-wide drop-shadow-md"
         >
           BrainFreeze is a mental cold shock.
@@ -64,10 +64,10 @@ const Index = () => {
         </motion.p>
 
         {/* CTA Buttons */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.8, delay: 0.7 }} 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
           className="mb-32 flex flex-col md:flex-row items-center justify-center gap-8"
         >
           {/* Button 1: Download Now */}
@@ -92,26 +92,26 @@ const Index = () => {
         </motion.div>
 
         {/* Feature Cards Grid */}
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.8, delay: 0.9 }} 
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9 }}
           className="grid w-full max-w-7xl grid-cols-1 md:grid-cols-3 gap-8 px-4"
         >
-          <FrostCard 
-            title="BrainFreeze Routines™" 
-            image={iceCrystals} 
-            imageAlt="Ice Crystal Formation" 
+          <FrostCard
+            title="BrainFreeze Routines™"
+            image={iceCrystals}
+            imageAlt="Ice Crystal Formation"
           />
-          <FrostCard 
-            title="Mental Temperature™" 
-            image={temperatureGauge} 
-            imageAlt="Temperature Gauge" 
+          <FrostCard
+            title="Mental Temperature™"
+            image={temperatureGauge}
+            imageAlt="Temperature Gauge"
           />
-          <FrostCard 
-            title="Freeze Streaks™" 
-            image={iceCubes} 
-            imageAlt="Stacked Ice Cubes" 
+          <FrostCard
+            title="Freeze Streaks™"
+            image={iceCubes}
+            imageAlt="Stacked Ice Cubes"
           />
         </motion.div>
       </main>

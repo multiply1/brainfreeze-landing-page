@@ -6,14 +6,14 @@ import btnBg from "@/assets/DOWNLOAD APP.png";
 export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 w-full pt-6 px-4 md:px-12">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
+      <div className="relative max-w-7xl mx-auto flex items-center justify-between">
+
         {/* 1. VASEN: LOGO */}
         <div className="flex items-center gap-3">
-          <img 
-            src={logo} 
-            alt="BrainFreeze Logo" 
-            className="h-12 w-12 md:h-16 md:w-16 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]" 
+          <img
+            src={logo}
+            alt="BrainFreeze Logo"
+            className="h-12 w-12 md:h-16 md:w-16 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]"
           />
           <div className="hidden md:block text-2xl font-bold tracking-wide leading-tight">
             <span className="text-white">Brain</span>
@@ -22,9 +22,9 @@ export const Navbar = () => {
         </div>
 
         {/* 2. KESKI: NAVIGAATIO (Jäätanko-tausta) */}
-        <div 
-          className="absolute left-1/2 top-6 -translate-x-1/2 hidden md:flex items-center justify-center px-12 h-[65px] bg-center bg-no-repeat bg-contain"
-          style={{ backgroundImage: `url("${navBg}")`, width: '500px' }}
+        <div
+          className="absolute left-1/2 top-6 -translate-x-1/2 hidden md:flex items-center justify-center h-[72px] w-[520px] max-w-[90vw] bg-center bg-no-repeat bg-contain px-16"
+          style={{ backgroundImage: `url("${navBg}")` }}
         >
           {/* Linkit nostettu hieman ylös (pb-2) jotta ne osuvat jään keskelle */}
           <div className="flex items-center gap-10 pb-3">
@@ -34,7 +34,7 @@ export const Navbar = () => {
                 href={`#${item.toLowerCase()}`}
                 className="
                   text-sm font-bold text-cyan-50 uppercase tracking-widest
-                  transition-all duration-300 
+                  transition-all duration-300
                   hover:text-white hover:drop-shadow-[0_0_8px_rgba(255,255,255,1)]
                   shadow-black drop-shadow-sm
                 "

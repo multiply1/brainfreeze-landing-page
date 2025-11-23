@@ -44,11 +44,11 @@ const Index = () => {
       }} className="text-center mb-6">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
             <span className="bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent">
-              Freeze Your Brain,
+              Mental cold shock
             </span>
             <br />
             <span className="bg-gradient-to-b from-cyan-100 via-white to-cyan-300 bg-clip-text text-transparent">
-              Not Your Flow.
+              for better habits.
             </span>
           </h1>
         </motion.div>

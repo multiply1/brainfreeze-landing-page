@@ -34,7 +34,7 @@ export const Navbar = () => {
           >
             {/* Linkit: Lisätty pt-1 hienosäätöön */}
             <div className="flex items-center gap-10 pt-1">
-              {["Home", "About", "Services", "Contact"].map((item) => (
+              {["Home", "About", "Shop", "Contact"].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase()}`}

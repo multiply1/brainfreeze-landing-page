@@ -11,8 +11,8 @@ import navBg from "@/assets/HERO BANNER ICE 2.jpg";
 import { motion } from "framer-motion";
 const Index = () => {
   return <div className="relative min-h-screen overflow-x-hidden font-sans text-foreground" style={{
-      background: 'var(--gradient-hero)'
-    }}>
+    background: 'var(--gradient-hero)'
+  }}>
       <Navbar />
       
       {/* Main Content */}
@@ -63,9 +63,9 @@ const Index = () => {
       }} transition={{
         duration: 0.8,
         delay: 0.5
-      }} className="mb-16 text-center text-lg md:text-2xl text-cyan-50 max-w-2xl font-light tracking-wide drop-shadow-md">
-          BrainFreeze is a mental cold shock.
-          <br />
+      }} className="mb-16 text-center text-lg md:text-2xl text-cyan-50 max-w-2xl font-light tracking-wide drop-shadow-md">BrainFreeze is a mental cold shock.
+
+        <br />
           Freeze the chaos. Build the clarity.
         </motion.p>
 

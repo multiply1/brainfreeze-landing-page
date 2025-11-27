@@ -8,7 +8,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between relative">
         
         {/* 1. VASEN: LOGO */}
-        <div className="flex items-center gap-3 shrink-0 z-50">
+        <div className="flex items-center gap-3 shrink-0 z-50 self-center">
           <img 
             src={logo} 
             alt="BrainFreeze Logo" 
@@ -53,7 +53,7 @@ export const Navbar = () => {
         </div>
 
         {/* 3. OIKEA: BUTTON (DOWNLOAD APP) */}
-        <div className="shrink-0 z-50">
+        <div className="shrink-0 z-50 self-center">
           <button
             className="relative group flex items-center justify-center bg-center bg-no-repeat transition-transform hover:scale-105 active:scale-95"
             style={{ 

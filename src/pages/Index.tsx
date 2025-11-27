@@ -1,5 +1,4 @@
 import { Navbar } from "@/components/Navbar";
-import { VideoBackground } from "@/components/VideoBackground";
 import { FrostCard } from "@/components/FrostCard";
 import heroEmblem from "@/assets/hero-emblem.png";
 import iceCrystals from "@/assets/ice-crystals.png";
@@ -11,8 +10,9 @@ import btnBg from "@/assets/DOWNLOAD APP.jpg";
 import navBg from "@/assets/HERO BANNER ICE 2.jpg";
 import { motion } from "framer-motion";
 const Index = () => {
-  return <div className="relative min-h-screen overflow-x-hidden font-sans text-foreground">
-      <VideoBackground />
+  return <div className="relative min-h-screen overflow-x-hidden font-sans text-foreground" style={{
+      background: 'var(--gradient-hero)'
+    }}>
       <Navbar />
       
       {/* Main Content */}

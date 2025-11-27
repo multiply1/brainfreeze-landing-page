@@ -24,7 +24,7 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
       }}
     >
       {/* p-10 = Pienempi padding, jotta kuvat voivat olla isompia */}
-      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-10">
+      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-10 bg-white rounded-lg m-4">
         
         {/* Otsikko ylhäällä */}
         <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">

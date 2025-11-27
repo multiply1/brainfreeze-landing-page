@@ -23,22 +23,20 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
         backgroundSize: '100% 100%'
       }}
     >
-      {/* p-14 = Iso padding joka pitää sisällön poissa jään reunoilta.
-         Säädä tätä (p-12, p-14, p-16) jos teksti osuu vielä reunoihin.
-      */}
-      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-14">
+      {/* p-10 = Pienempi padding, jotta kuvat voivat olla isompia */}
+      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-10">
         
         {/* Otsikko ylhäällä */}
-        <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] mt-2 leading-tight">
+        <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">
           {title}
         </h3>
         
-        {/* Kuva keskellä/alhaalla */}
+        {/* Kuva keskellä/alhaalla - Isompi */}
         <div className="flex-1 flex items-center justify-center w-full">
           <img 
             src={image} 
             alt={imageAlt} 
-            className="max-h-[90px] md:max-h-[110px] w-auto object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.5)]" 
+            className="max-h-[180px] md:max-h-[220px] w-auto object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.5)]" 
           />
         </div>
       </div>

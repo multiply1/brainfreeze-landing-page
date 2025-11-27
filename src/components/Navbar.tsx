@@ -4,7 +4,7 @@ import btnBg from "@/assets/DOWNLOAD APP.jpg";
 
 export const Navbar = () => {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 w-full pt-6 px-4 md:px-12">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full pt-6 px-4 md:px-12 bg-background/30 backdrop-blur-md border-b border-white/5">
       <div className="max-w-7xl mx-auto flex items-center justify-between relative">
         
         {/* 1. VASEN: LOGO */}

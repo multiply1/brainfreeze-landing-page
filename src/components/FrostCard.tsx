@@ -26,7 +26,7 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
       {/* Valkoinen sisäalue gradientilla, joka sulautuu jääkehykseen */}
       <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-between p-8 rounded-lg m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)]"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 50%, rgba(200,230,255,0.3) 100%)'
+          background: 'radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 60%, rgba(255,255,255,0.4) 100%)'
         }}
       >
         

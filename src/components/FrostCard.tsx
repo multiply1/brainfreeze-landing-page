@@ -23,12 +23,8 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
         backgroundSize: '100% 100%'
       }}
     >
-      {/* Valkoinen sisäalue gradientilla, joka sulautuu jääkehykseen */}
-      <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-between p-8 rounded-lg m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)]"
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 60%, rgba(255,255,255,0.4) 100%)'
-        }}
-      >
+      {/* Valkoinen sisäalue, joka jättää tilaa jääkehykselle */}
+      <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-between p-8 bg-white rounded-lg m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)]">
         
         {/* Otsikko ylhäällä */}
         <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">

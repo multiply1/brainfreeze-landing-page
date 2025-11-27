@@ -23,23 +23,20 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
         backgroundSize: '100% 100%'
       }}
     >
-      {/* p-8 = Tasapainoinen padding */}
-      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-8">
+      {/* p-10 = Pienempi padding, jotta kuvat voivat olla isompia */}
+      <div className="relative z-10 flex flex-col items-center text-center w-full h-full justify-between p-10">
         
         {/* Otsikko ylhäällä */}
-        <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight mb-2">
+        <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">
           {title}
         </h3>
         
-        {/* Kuva keskellä/alhaalla - Isompi ja parempi blend */}
-        <div className="flex-1 flex items-center justify-center w-full overflow-hidden">
+        {/* Kuva keskellä/alhaalla - Isompi */}
+        <div className="flex-1 flex items-center justify-center w-full">
           <img 
             src={image} 
             alt={imageAlt} 
-            className="max-h-[200px] md:max-h-[240px] w-auto object-contain drop-shadow-[0_0_30px_rgba(6,182,212,0.6)] mix-blend-screen"
-            style={{
-              filter: 'brightness(1.1) contrast(1.05)'
-            }}
+            className="max-h-[180px] md:max-h-[220px] w-auto object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.5)]" 
           />
         </div>
       </div>

@@ -15,14 +15,18 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        "relative w-full aspect-square flex flex-col items-center justify-center bg-center bg-no-repeat",
+        "relative w-full aspect-square flex flex-col items-center justify-center",
         className
       )}
-      style={{ 
-        backgroundImage: `url("${cardFrame}")`,
-        backgroundSize: '100% 100%'
-      }}
     >
+      {/* Jääkehys päällimmäisenä kerroksena */}
+      <div 
+        className="absolute inset-0 z-20 pointer-events-none bg-center bg-no-repeat"
+        style={{ 
+          backgroundImage: `url("${cardFrame}")`,
+          backgroundSize: '100% 100%'
+        }}
+      />
       {/* Kuva täyttää koko sisäalueen */}
       <div className="relative z-10 flex flex-col items-center justify-end m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)] h-[calc(100%-4rem)] md:h-[calc(100%-5rem)] overflow-hidden rounded-lg">
         <img 

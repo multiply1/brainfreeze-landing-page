@@ -63,7 +63,7 @@ const Index = () => {
       }} transition={{
         duration: 0.8,
         delay: 0.5
-      }} className="mb-16 text-center text-lg md:text-2xl text-cyan-50 max-w-2xl font-light tracking-wide drop-shadow-md">BrainFreeze is a mental cold shock.
+      }} className="mb-16 text-center text-lg md:text-2xl text-cyan-50 max-w-2xl font-light tracking-wide drop-shadow-md">Your mental cold shock.
 
         <br />
           Freeze the chaos. Build the clarity.

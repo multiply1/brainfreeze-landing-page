@@ -36,6 +36,7 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
           <img 
             src={image} 
             alt={imageAlt} 
+            loading="eager"
             className="max-h-[180px] md:max-h-[220px] w-auto object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.5)]" 
           />
         </div>

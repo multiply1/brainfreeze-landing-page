@@ -23,22 +23,20 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
         backgroundSize: '100% 100%'
       }}
     >
-      {/* Läpinäkyvä sisäalue, joka jättää tilaa jääkehykselle */}
-      <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-between p-8 m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)]">
+      {/* Kuva täyttää koko sisäalueen */}
+      <div className="relative z-10 flex flex-col items-center justify-end m-8 md:m-10 w-[calc(100%-4rem)] md:w-[calc(100%-5rem)] h-[calc(100%-4rem)] md:h-[calc(100%-5rem)] overflow-hidden rounded-lg">
+        <img 
+          src={image} 
+          alt={imageAlt} 
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-cover" 
+        />
         
-        {/* Otsikko ylhäällä */}
-        <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">
-          {title}
-        </h3>
-        
-        {/* Kuva keskellä/alhaalla - Isompi */}
-        <div className="flex-1 flex items-center justify-center w-full">
-          <img 
-            src={image} 
-            alt={imageAlt} 
-            loading="eager"
-            className="max-h-[180px] md:max-h-[220px] w-auto object-contain drop-shadow-[0_0_20px_rgba(6,182,212,0.5)]" 
-          />
+        {/* Otsikko alhaalla, tumman gradientin päällä */}
+        <div className="relative z-10 w-full bg-gradient-to-t from-black/80 via-black/50 to-transparent py-6 px-4">
+          <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">
+            {title}
+          </h3>
         </div>
       </div>
     </motion.div>

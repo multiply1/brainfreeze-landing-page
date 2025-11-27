@@ -37,8 +37,8 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
         />
         
         {/* Otsikko alhaalla, tumman gradientin päällä */}
-        <div className="relative z-10 w-full bg-gradient-to-t from-black/80 via-black/50 to-transparent py-6 px-4">
-          <h3 className="text-lg md:text-xl font-bold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] leading-tight">
+        <div className="relative z-10 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent py-6 px-4">
+          <h3 className="text-lg md:text-xl font-bold leading-tight bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             {title}
           </h3>
         </div>

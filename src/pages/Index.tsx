@@ -1,9 +1,9 @@
 import { Navbar } from "@/components/Navbar";
 import { FrostCard } from "@/components/FrostCard";
 import heroEmblem from "@/assets/hero-emblem.png";
-import iceCrystals from "@/assets/ice-crystals.png";
-import temperatureGauge from "@/assets/temperature-gauge.png";
-import iceCubes from "@/assets/ice-cubes.png";
+import alarmClock from "@/assets/alarm-clock.png";
+import brainFreezePerson from "@/assets/brain-freeze-person.png";
+import streakCard from "@/assets/streak-card.png";
 
 // Kuvat
 import btnBg from "@/assets/DOWNLOAD APP.jpg";
@@ -114,9 +114,9 @@ const Index = () => {
         duration: 0.8,
         delay: 0.9
       }} className="grid w-full max-w-7xl grid-cols-1 md:grid-cols-3 gap-12 px-4">
-          <FrostCard title="BrainFreeze Routines™" image={iceCrystals} imageAlt="Ice Crystal Formation" />
-          <FrostCard title="Mental Temperature™" image={temperatureGauge} imageAlt="Temperature Gauge" />
-          <FrostCard title="Freeze Streaks™" image={iceCubes} imageAlt="Stacked Ice Cubes" />
+          <FrostCard title="BrainFreeze Routines™" image={alarmClock} imageAlt="Alarm Clock" />
+          <FrostCard title="Mental Temperature™" image={brainFreezePerson} imageAlt="Brain Freeze Effect" />
+          <FrostCard title="Freeze Streaks™" image={streakCard} imageAlt="Freeze Streak" />
         </motion.div>
       </main>
 

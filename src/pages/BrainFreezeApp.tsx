@@ -251,7 +251,6 @@ export default function BrainFreezeApp() {
           <HomeView
             streak={streak}
             dailyLogs={dailyLogs}
-            startFreezeFlow={() => setFreezeFlow({ step: 'checkin', timer: 0, technique: TECHNIQUES[0] })}
             toggleLogging={() => toggleModal('logging', true)}
             goals={displayGoals}
             openGoalCreator={openGoalCreator}
@@ -318,107 +317,132 @@ export default function BrainFreezeApp() {
 
 // --- VIEW COMPONENTS ---
 
-const HomeView = ({ streak, dailyLogs, startFreezeFlow, toggleLogging, goals, openGoalCreator, loading }: any) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+const HomeView = ({ streak, dailyLogs, toggleLogging, goals, openGoalCreator, loading }: any) => (
+  <div className="space-y-8 max-w-5xl mx-auto">
     {/* Desktop grid layout */}
     <div className="lg:grid lg:grid-cols-2 lg:gap-8">
       {/* Left column */}
-      <div className="space-y-8">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={startFreezeFlow}
-          className="w-full py-6 lg:py-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl text-white font-bold text-xl lg:text-2xl shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3"
-        >
-          <Snowflake className="animate-pulse" size={28} />
-          FREEZE NOW
-        </motion.button>
-
+      <div className="space-y-6">
         <div className="flex items-baseline justify-between">
           <h2 className="text-lg font-bold text-white">Daily Overview</h2>
           <span className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}</span>
         </div>
 
-        <div className="p-6 lg:p-8 rounded-2xl bg-slate-900/50 border border-cyan-500/20 backdrop-blur-lg">
-          <div className="flex items-center gap-6">
+        {/* Streak Card - Enhanced */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-6 lg:p-8 rounded-3xl bg-slate-900/80 border border-slate-700/50 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative overflow-hidden"
+        >
+          {/* Subtle glow effect */}
+          <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl" />
+          
+          <div className="relative flex items-center gap-8">
             <div>
-              <p className="text-5xl lg:text-6xl font-bold text-cyan-400">{streak.current}</p>
-              <p className="text-slate-400">Day Streak</p>
+              <p className="text-6xl lg:text-7xl font-black text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.3)]">{streak.current}</p>
+              <p className="text-slate-400 font-medium mt-1">Day Streak</p>
             </div>
-            <div className="flex-1">
-              <p className="text-sm text-slate-500 mb-2">Best: {streak.best} days</p>
-              <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style={{ width: `${streak.todayProgress}%` }} />
+            <div className="flex-1 space-y-3">
+              <p className="text-sm text-slate-300">Best: {streak.best} days</p>
+              <div className="h-3 bg-slate-800/80 rounded-full overflow-hidden shadow-inner">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${streak.todayProgress}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-full" 
+                />
               </div>
-              <p className="text-xs text-slate-500 mt-1">{streak.todayProgress}% daily progress</p>
+              <p className="text-xs text-slate-500">{streak.todayProgress}% daily progress</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Daily Check-ins */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
+        {/* Daily Check-ins - Enhanced */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="p-6 rounded-3xl bg-slate-900/60 border border-slate-700/40 backdrop-blur-xl"
+        >
+          <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-white">Daily Check-ins</h3>
               <p className="text-sm text-slate-400">Track your mood 3x / day</p>
             </div>
-            <span className="text-cyan-400 font-bold">{dailyLogs.length}/3</span>
+            <span className="text-cyan-400 font-bold text-lg">{dailyLogs.length}/3</span>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {[0, 1, 2].map((index) => {
               const log = dailyLogs[index];
               const isLocked = index > dailyLogs.length;
               return (
-                <button
+                <motion.button
                   key={index}
+                  whileHover={{ scale: !log && !isLocked ? 1.05 : 1 }}
+                  whileTap={{ scale: !log && !isLocked ? 0.95 : 1 }}
                   onClick={() => !log && !isLocked && toggleLogging()}
-                  className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all backdrop-blur-sm ${log ? 'bg-slate-800 border border-cyan-500/30 text-cyan-400' : isLocked ? 'bg-slate-900/30 border border-slate-800 text-slate-700' : 'bg-slate-900 border border-slate-700 text-slate-400 hover:border-cyan-500/50 hover:text-white cursor-pointer'}`}
+                  className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all ${log ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-cyan-500/40 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)]' : isLocked ? 'bg-slate-900/30 border border-slate-800 text-slate-700' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-cyan-500/50 hover:text-white hover:bg-slate-800 cursor-pointer'}`}
                 >
                   {log ? (
                     <>
-                      {log.mood === 'great' && <Smile size={24} />}
-                      {log.mood === 'okay' && <Meh size={24} />}
-                      {log.mood === 'struggling' && <Frown size={24} />}
-                      <span className="text-xs">{log.time}</span>
+                      {log.mood === 'great' && <Smile size={28} className="text-green-400" />}
+                      {log.mood === 'okay' && <Meh size={28} className="text-yellow-400" />}
+                      {log.mood === 'struggling' && <Frown size={28} className="text-red-400" />}
+                      <span className="text-xs font-medium">{log.time}</span>
                     </>
                   ) : isLocked ? <Clock size={24} /> : <Plus size={24} />}
-                </button>
+                </motion.button>
               );
             })}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Right column - Goals */}
-      <div className="space-y-4 mt-8 lg:mt-0">
-        <h3 className="text-lg font-bold text-white">Start a New Goal</h3>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="space-y-4 mt-8 lg:mt-0"
+      >
+        <div className="flex items-baseline justify-between">
+          <h3 className="text-lg font-bold text-white">Start a New Goal</h3>
+          <span className="text-sm text-slate-400">{goals.length} active</span>
+        </div>
+        
         {loading ? (
           <div className="text-center py-8 text-slate-400">Loading goals...</div>
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            {GOAL_TEMPLATES.map(template => {
+            {GOAL_TEMPLATES.map((template, i) => {
               const isActive = goals.some((g: any) => g.goal_id === template.id);
               return (
-                <button
+                <motion.button
                   key={template.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.05 * i }}
+                  whileHover={{ scale: isActive ? 1 : 1.03 }}
+                  whileTap={{ scale: isActive ? 1 : 0.97 }}
                   onClick={() => !isActive && openGoalCreator(template)}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col gap-3 backdrop-blur-lg relative overflow-hidden ${isActive ? 'bg-slate-900/30 border-green-500/30 opacity-60 pointer-events-none' : `cursor-pointer hover:scale-[1.02] active:scale-95 ${template.bg} ${template.border}`}`}
+                  className={`p-5 rounded-2xl border transition-all flex flex-col gap-3 relative overflow-hidden ${isActive ? 'bg-slate-900/40 border-green-500/40 opacity-70' : `cursor-pointer bg-slate-900/60 backdrop-blur-lg hover:bg-slate-800/60 ${template.border}`}`}
                 >
                   <div className="flex items-center justify-between">
-                    <template.icon className={template.color} size={24} />
-                    {isActive && <span className="text-xs text-green-400 font-medium">Active</span>}
+                    <div className={`p-2 rounded-xl ${template.bg}`}>
+                      <template.icon className={template.color} size={22} />
+                    </div>
+                    {isActive && <span className="text-xs text-green-400 font-semibold bg-green-500/10 px-2 py-0.5 rounded-full">Active</span>}
                   </div>
-                  <span className="text-sm font-medium text-white">{template.title}</span>
-                </button>
+                  <span className="text-sm font-semibold text-white">{template.title}</span>
+                </motion.button>
               );
             })}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   </div>
 );
-
 const InsightsView = ({ logs }: any) => (
   <div className="space-y-8">
     <div className="flex items-baseline justify-between">

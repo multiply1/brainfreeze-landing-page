@@ -1,8 +1,8 @@
 import React, { useState, useEffect, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGoals, Goal } from '@/hooks/useGoals';
-import { Navbar } from '@/components/Navbar';
+import logo from '@/assets/logo.png';
 import {
   Wind, Zap, Home, Activity, Droplets, Moon,
   BarChart2, User, LayoutGrid, Target, LogOut,
@@ -102,8 +102,8 @@ const ICON_MAP: Record<string, any> = {
 // --- SUB-COMPONENTS ---
 
 const NavigationBar = memo(({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) => (
-  <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 px-4 py-3 safe-area-pb">
-    <div className="max-w-md mx-auto flex justify-around items-center">
+  <nav className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 px-4 py-3 safe-area-pb lg:left-auto lg:right-auto lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:w-20 lg:rounded-2xl lg:border lg:border-slate-700 lg:ml-4 lg:flex-col lg:py-6">
+    <div className="max-w-md mx-auto flex justify-around items-center lg:flex-col lg:gap-6">
       <NavButton tab="home" current={activeTab} set={setActiveTab} icon={Home} label="Home" />
       <NavButton tab="insights" current={activeTab} set={setActiveTab} icon={BarChart2} label="Insights" />
       <NavButton tab="tools" current={activeTab} set={setActiveTab} icon={Zap} label="Tools" />
@@ -222,10 +222,31 @@ export default function BrainFreezeApp() {
 
   return (
     <div className="min-h-screen font-sans text-white" style={{ background: 'var(--gradient-hero)' }}>
-      <Navbar />
+      {/* App Header - Logo only */}
+      <header className="fixed top-0 left-0 right-0 z-40 px-4 py-4 lg:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <img 
+              src={logo} 
+              alt="BrainFreeze Logo" 
+              className="h-10 w-10 lg:h-12 lg:w-12 object-contain drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]" 
+            />
+            <div className="text-xl lg:text-2xl font-bold tracking-wide leading-tight">
+              <span className="text-white">Brain</span>
+              <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">Freeze</span>
+            </div>
+          </Link>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-400 hidden sm:block">{user?.email}</span>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
+              {user?.email?.charAt(0).toUpperCase() || 'U'}
+            </div>
+          </div>
+        </div>
+      </header>
 
-      {/* CONTENT AREA */}
-      <main className="pt-24 pb-24 px-4 max-w-md mx-auto overflow-y-auto min-h-screen">
+      {/* CONTENT AREA - Desktop optimized */}
+      <main className="pt-20 pb-24 px-4 lg:pl-28 lg:pr-8 lg:pb-8 max-w-7xl mx-auto overflow-y-auto min-h-screen">
         {activeTab === 'home' && (
           <HomeView
             streak={streak}
@@ -298,85 +319,101 @@ export default function BrainFreezeApp() {
 // --- VIEW COMPONENTS ---
 
 const HomeView = ({ streak, dailyLogs, startFreezeFlow, toggleLogging, goals, openGoalCreator, loading }: any) => (
-  <div className="space-y-8">
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      onClick={startFreezeFlow}
-      className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl text-white font-bold text-xl shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3"
-    >
-      <Snowflake className="animate-pulse" />
-      FREEZE NOW
-    </motion.button>
+  <div className="space-y-8 max-w-4xl mx-auto">
+    {/* Desktop grid layout */}
+    <div className="lg:grid lg:grid-cols-2 lg:gap-8">
+      {/* Left column */}
+      <div className="space-y-8">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={startFreezeFlow}
+          className="w-full py-6 lg:py-8 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-2xl text-white font-bold text-xl lg:text-2xl shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3"
+        >
+          <Snowflake className="animate-pulse" size={28} />
+          FREEZE NOW
+        </motion.button>
 
-    <div className="flex items-baseline justify-between">
-      <h2 className="text-lg font-bold text-white">Daily Overview</h2>
-      <span className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}</span>
-    </div>
-
-    <div className="p-6 rounded-2xl bg-slate-900/50 border border-cyan-500/20 backdrop-blur-lg">
-      <p className="text-5xl font-bold text-cyan-400">{streak.current}</p>
-      <p className="text-slate-400">Day Streak</p>
-      <div className="mt-4 h-2 bg-slate-800 rounded-full overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style={{ width: `${streak.todayProgress}%` }} />
-      </div>
-    </div>
-
-    <div className="space-y-4">
-      <h3 className="text-lg font-bold text-white">Start a New Goal</h3>
-      {loading ? (
-        <div className="text-center py-8 text-slate-400">Loading goals...</div>
-      ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {GOAL_TEMPLATES.map(template => {
-            const isActive = goals.some((g: any) => g.goal_id === template.id);
-            return (
-              <button
-                key={template.id}
-                onClick={() => !isActive && openGoalCreator(template)}
-                className={`p-4 rounded-2xl border transition-all flex flex-col gap-3 backdrop-blur-lg relative overflow-hidden ${isActive ? 'bg-slate-900/30 border-green-500/30 opacity-60 pointer-events-none' : `cursor-pointer hover:scale-[1.02] active:scale-95 ${template.bg} ${template.border}`}`}
-              >
-                <div className="flex items-center justify-between">
-                  <template.icon className={template.color} size={24} />
-                  {isActive && <span className="text-xs text-green-400 font-medium">Active</span>}
-                </div>
-                <span className="text-sm font-medium text-white">{template.title}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-lg font-bold text-white">Daily Overview</h2>
+          <span className="text-sm text-slate-400">{new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })}</span>
         </div>
-      )}
-    </div>
 
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-bold text-white">Daily Check-ins</h3>
-          <p className="text-sm text-slate-400">Track your mood 3x / day</p>
+        <div className="p-6 lg:p-8 rounded-2xl bg-slate-900/50 border border-cyan-500/20 backdrop-blur-lg">
+          <div className="flex items-center gap-6">
+            <div>
+              <p className="text-5xl lg:text-6xl font-bold text-cyan-400">{streak.current}</p>
+              <p className="text-slate-400">Day Streak</p>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-slate-500 mb-2">Best: {streak.best} days</p>
+              <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-cyan-500 to-blue-500" style={{ width: `${streak.todayProgress}%` }} />
+              </div>
+              <p className="text-xs text-slate-500 mt-1">{streak.todayProgress}% daily progress</p>
+            </div>
+          </div>
         </div>
-        <span className="text-cyan-400 font-bold">{dailyLogs.length}/3</span>
+
+        {/* Daily Check-ins */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-white">Daily Check-ins</h3>
+              <p className="text-sm text-slate-400">Track your mood 3x / day</p>
+            </div>
+            <span className="text-cyan-400 font-bold">{dailyLogs.length}/3</span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[0, 1, 2].map((index) => {
+              const log = dailyLogs[index];
+              const isLocked = index > dailyLogs.length;
+              return (
+                <button
+                  key={index}
+                  onClick={() => !log && !isLocked && toggleLogging()}
+                  className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all backdrop-blur-sm ${log ? 'bg-slate-800 border border-cyan-500/30 text-cyan-400' : isLocked ? 'bg-slate-900/30 border border-slate-800 text-slate-700' : 'bg-slate-900 border border-slate-700 text-slate-400 hover:border-cyan-500/50 hover:text-white cursor-pointer'}`}
+                >
+                  {log ? (
+                    <>
+                      {log.mood === 'great' && <Smile size={24} />}
+                      {log.mood === 'okay' && <Meh size={24} />}
+                      {log.mood === 'struggling' && <Frown size={24} />}
+                      <span className="text-xs">{log.time}</span>
+                    </>
+                  ) : isLocked ? <Clock size={24} /> : <Plus size={24} />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        {[0, 1, 2].map((index) => {
-          const log = dailyLogs[index];
-          const isLocked = index > dailyLogs.length;
-          return (
-            <button
-              key={index}
-              onClick={() => !log && !isLocked && toggleLogging()}
-              className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all backdrop-blur-sm ${log ? 'bg-slate-800 border border-cyan-500/30 text-cyan-400' : isLocked ? 'bg-slate-900/30 border border-slate-800 text-slate-700' : 'bg-slate-900 border border-slate-700 text-slate-400 hover:border-cyan-500/50 hover:text-white cursor-pointer'}`}
-            >
-              {log ? (
-                <>
-                  {log.mood === 'great' && <Smile size={24} />}
-                  {log.mood === 'okay' && <Meh size={24} />}
-                  {log.mood === 'struggling' && <Frown size={24} />}
-                  <span className="text-xs">{log.time}</span>
-                </>
-              ) : isLocked ? <Clock size={24} /> : <Plus size={24} />}
-            </button>
-          );
-        })}
+
+      {/* Right column - Goals */}
+      <div className="space-y-4 mt-8 lg:mt-0">
+        <h3 className="text-lg font-bold text-white">Start a New Goal</h3>
+        {loading ? (
+          <div className="text-center py-8 text-slate-400">Loading goals...</div>
+        ) : (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            {GOAL_TEMPLATES.map(template => {
+              const isActive = goals.some((g: any) => g.goal_id === template.id);
+              return (
+                <button
+                  key={template.id}
+                  onClick={() => !isActive && openGoalCreator(template)}
+                  className={`p-4 rounded-2xl border transition-all flex flex-col gap-3 backdrop-blur-lg relative overflow-hidden ${isActive ? 'bg-slate-900/30 border-green-500/30 opacity-60 pointer-events-none' : `cursor-pointer hover:scale-[1.02] active:scale-95 ${template.bg} ${template.border}`}`}
+                >
+                  <div className="flex items-center justify-between">
+                    <template.icon className={template.color} size={24} />
+                    {isActive && <span className="text-xs text-green-400 font-medium">Active</span>}
+                  </div>
+                  <span className="text-sm font-medium text-white">{template.title}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   </div>

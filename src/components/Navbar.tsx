@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import navBg from "@/assets/HERO BANNER ICE 2.jpg";
 import btnBg from "@/assets/DOWNLOAD APP.jpg";
@@ -8,7 +9,7 @@ export const Navbar = () => {
       <div className="max-w-7xl mx-auto flex items-center justify-between relative">
         
         {/* 1. VASEN: LOGO */}
-        <div className="flex items-center gap-3 shrink-0 z-50 self-center">
+        <Link to="/" className="flex items-center gap-3 shrink-0 z-50 self-center hover:opacity-90 transition-opacity">
           <img 
             src={logo} 
             alt="BrainFreeze Logo" 
@@ -18,7 +19,7 @@ export const Navbar = () => {
             <span className="text-white">Brain</span>
             <span className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">Freeze</span>
           </div>
-        </div>
+        </Link>
 
         {/* 2. KESKI: NAVIGAATIO (Jäätanko) */}
         {/* Absolute center positioning */}

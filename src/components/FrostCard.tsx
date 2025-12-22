@@ -33,11 +33,11 @@ export const FrostCard = ({ title, image, imageAlt, className }: FrostCardProps)
           src={image} 
           alt={imageAlt} 
           loading="eager"
-          className="absolute inset-0 w-full h-full object-cover" 
+          className="absolute inset-0 w-full h-full object-cover z-0" 
         />
         
         {/* Otsikko alhaalla, tumman gradientin päällä */}
-        <div className="relative z-10 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent py-6 px-4 text-center">
+        <div className="relative z-20 w-full bg-gradient-to-t from-black/90 via-black/60 to-transparent py-6 px-4 text-center">
           <h3 className="text-lg md:text-xl font-bold leading-tight bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             {title}
           </h3>

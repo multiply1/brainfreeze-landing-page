@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      user_goals: {
+        Row: {
+          color: string | null
+          created_at: string
+          goal_id: string
+          icon: string | null
+          id: string
+          last_relapse: string | null
+          reason: string | null
+          status: string
+          streak: number
+          target: string | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          goal_id: string
+          icon?: string | null
+          id?: string
+          last_relapse?: string | null
+          reason?: string | null
+          status?: string
+          streak?: number
+          target?: string | null
+          title: string
+          type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          goal_id?: string
+          icon?: string | null
+          id?: string
+          last_relapse?: string | null
+          reason?: string | null
+          status?: string
+          streak?: number
+          target?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

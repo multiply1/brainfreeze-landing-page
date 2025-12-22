@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { FrostCard } from "@/components/FrostCard";
 import heroEmblem from "@/assets/hero-emblem.png";
@@ -80,15 +81,15 @@ const Index = () => {
         delay: 0.7
       }} className="mb-32 flex flex-col md:flex-row items-center justify-center gap-10">
           {/* Button 1: Download Now (Jäinen iso nappi) */}
-          <button className="relative group flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95" style={{
+          <Link to="/app" className="relative group flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95" style={{
           backgroundImage: `url("${btnBg}")`,
           width: '280px',
-          height: '90px' // Korkeampi koska tässä kuvassa on jääpuikot alhaalla
+          height: '90px'
         }}>
             <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] pb-3">
-              Download Now
+              Start Now
             </span>
-          </button>
+          </Link>
 
           {/* Button 2: Explore Routines (Pitkä palkki) */}
           <button className="relative group flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95 opacity-90 hover:opacity-100" style={{

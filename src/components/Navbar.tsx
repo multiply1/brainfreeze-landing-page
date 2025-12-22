@@ -65,7 +65,7 @@ export const Navbar = () => {
           >
             {/* Tekstiä nostettu (pb-2) jotta se ei osu jääpuikkoihin */}
             <span className="relative z-10 text-xs font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pb-2">
-              Download Now
+              Start Now
             </span>
           </button>
         </div>

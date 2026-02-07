@@ -2,6 +2,11 @@ import React, { useState, useEffect, memo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useGoals, Goal } from '@/hooks/useGoals';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useDailyLogs } from '@/hooks/useDailyLogs';
+import { useStreakLogic } from '@/hooks/useStreakLogic';
+import { OnboardingFlow, OnboardingData } from '@/components/onboarding/OnboardingFlow';
+import { DailyCheckInModal, CheckInData } from '@/components/checkin/DailyCheckInModal';
 import logo from '@/assets/logo.png';
 import {
   Wind, Zap, Home, Activity, Droplets, Moon,
@@ -9,9 +14,10 @@ import {
   Snowflake, AlertCircle, Menu, Frown, Meh, Smile,
   ArrowRight, Settings, Plus, X, Trash2, Clock,
   Award, Smartphone, EyeOff, Utensils, Brain, CloudFog,
-  BatteryCharging, BedDouble, Dumbbell, BookOpen, Ban, Cigarette
+  BatteryCharging, BedDouble, Dumbbell, BookOpen, Ban, Cigarette,
+  Check, TrendingUp, Calendar, Flame
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // --- UTILS & DATA ---
 
@@ -69,12 +75,6 @@ const GOAL_TEMPLATES = [
   { id: 'other', title: "Custom Goal", icon: Target, color: "text-green-400", bg: "bg-green-900/20", border: "border-green-500/30" },
 ];
 
-const MOOD_OPTIONS = [
-  { value: 'great', label: "Great", icon: Smile, color: "text-green-400" },
-  { value: 'okay', label: "Okay", icon: Meh, color: "text-yellow-400" },
-  { value: 'struggling', label: "Struggling", icon: Frown, color: "text-red-400" },
-];
-
 const IMPULSE_TYPES = [
   { id: 'scroll', label: 'Doomscrolling', icon: Smartphone },
   { id: 'snack', label: 'Junk Food', icon: Utensils },
@@ -87,12 +87,6 @@ const REPLACEMENT_HABITS = [
   { id: 'deepwork', label: '5min Deep Work', icon: Zap },
   { id: 'read', label: 'Read a Page', icon: BookOpen },
 ];
-
-const CHART_DATA = Array.from({ length: 60 }, (_, i) => {
-  let val = 10;
-  val += Math.sin(i * 0.2) * 5 + i * 0.5 + Math.random() * 5;
-  return Math.max(5, val);
-});
 
 // Icon mapping for database storage
 const ICON_MAP: Record<string, any> = {
@@ -131,38 +125,90 @@ const NavButton = ({ tab, current, set, icon: Icon, label }: any) => {
 export default function BrainFreezeApp() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const { goals, loading: goalsLoading, createGoal, resetStreak } = useGoals();
+  const { goals, loading: goalsLoading, createGoal, resetStreak, refetch: refetchGoals } = useGoals();
+  const { preferences, loading: prefsLoading, needsOnboarding, createPreferences, completeOnboarding } = useUserPreferences();
+  const { todayLog, hasCheckedInToday, checkInStreak, createOrUpdateTodayLog, logs } = useDailyLogs();
+  const { processGoalCheckIn } = useStreakLogic();
 
   const [activeTab, setActiveTab] = useState('home');
-  const [streak] = useState({ current: 12, best: 15, todayProgress: 75 });
-  const [dailyLogs, setDailyLogs] = useState([{ id: 1, time: '08:30', mood: 'great', note: 'Good sleep.' }]);
+  const [showCheckIn, setShowCheckIn] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const [modals, setModals] = useState({
-    logging: false,
     goalCreator: false,
-    redlight: false,
     resetConfirm: false
   });
 
   const [freezeFlow, setFreezeFlow] = useState<{ step: string | null; timer: number; technique: typeof TECHNIQUES[0] | null }>({ step: null, timer: 0, technique: null });
   const [goalForm, setGoalForm] = useState<{ template: typeof GOAL_TEMPLATES[0] | null; reason: string; target: string }>({ template: null, reason: "", target: "" });
-  const [logForm, setLogForm] = useState<{ mood: string | null; note: string }>({ mood: null, note: "" });
+
+  // Check if onboarding needed
+  useEffect(() => {
+    if (!prefsLoading && needsOnboarding) {
+      setShowOnboarding(true);
+    }
+  }, [prefsLoading, needsOnboarding]);
+
+  // Prompt for check-in if not done today
+  useEffect(() => {
+    if (!prefsLoading && !needsOnboarding && !hasCheckedInToday && goals.length > 0) {
+      // Small delay to avoid immediate popup
+      const timer = setTimeout(() => {
+        setShowCheckIn(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [prefsLoading, needsOnboarding, hasCheckedInToday, goals.length]);
 
   const toggleModal = (key: keyof typeof modals, value: boolean) => {
     setModals(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSaveLog = () => {
-    if (!logForm.mood) return;
-    const newLog = {
-      id: Date.now(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      mood: logForm.mood,
-      note: logForm.note
-    };
-    setDailyLogs(prev => [newLog, ...prev]);
-    setLogForm({ mood: null, note: "" });
-    toggleModal('logging', false);
+  const handleOnboardingComplete = async (data: OnboardingData) => {
+    await createPreferences({
+      primary_motivation: data.primaryMotivation,
+      risk_times: data.riskTimes,
+      preferred_check_in_time: data.preferredCheckInTime,
+      onboarding_completed: true,
+    });
+
+    // Create goals from selected templates
+    for (const goalId of data.selectedGoals) {
+      const template = GOAL_TEMPLATES.find(t => t.id === goalId);
+      if (template) {
+        await createGoal({
+          goal_id: template.id,
+          title: template.title,
+          type: 'avoid',
+          streak: 0,
+          last_relapse: null,
+          icon: template.icon.name || 'Target',
+          color: template.color,
+          reason: data.primaryMotivation,
+          target: null,
+        });
+      }
+    }
+
+    setShowOnboarding(false);
+    refetchGoals();
+  };
+
+  const handleCheckInComplete = async (data: CheckInData) => {
+    // Save daily log
+    await createOrUpdateTodayLog({
+      mood_score: data.moodScore,
+      energy_level: data.energyLevel,
+      reflection: data.reflection,
+    });
+
+    // Process each goal status
+    for (const goalStatus of data.goalStatuses) {
+      await processGoalCheckIn(goalStatus.goalId, goalStatus.status);
+    }
+
+    setShowCheckIn(false);
+    refetchGoals();
   };
 
   const startIntervention = () => {
@@ -220,6 +266,16 @@ export default function BrainFreezeApp() {
     lastRelapse: g.last_relapse,
   }));
 
+  // Calculate total streak from all goals
+  const totalStreak = goals.reduce((max, g) => Math.max(max, g.streak), 0);
+  const bestStreak = goals.reduce((max, g) => Math.max(max, (g as any).best_streak || g.streak), 0);
+  const todayProgress = hasCheckedInToday ? 100 : goals.length > 0 ? 0 : 50;
+
+  // Show onboarding if needed
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+  }
+
   return (
     <div className="min-h-screen font-sans text-white" style={{ background: 'var(--gradient-hero)' }}>
       {/* App Header - Logo only */}
@@ -237,6 +293,19 @@ export default function BrainFreezeApp() {
             </div>
           </Link>
           <div className="flex items-center gap-3">
+            {/* Check-in indicator */}
+            {hasCheckedInToday ? (
+              <span className="flex items-center gap-1 text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
+                <Check size={14} /> Checked in
+              </span>
+            ) : goals.length > 0 && (
+              <button
+                onClick={() => setShowCheckIn(true)}
+                className="flex items-center gap-1 text-xs text-cyan-400 bg-cyan-500/10 px-3 py-1.5 rounded-full animate-pulse hover:bg-cyan-500/20 transition-colors"
+              >
+                <Snowflake size={14} /> Check in
+              </button>
+            )}
             <span className="text-sm text-slate-400 hidden sm:block">{user?.email}</span>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
@@ -249,21 +318,22 @@ export default function BrainFreezeApp() {
       <main className="pt-20 pb-24 px-4 lg:pl-28 lg:pr-8 lg:pb-8 max-w-7xl mx-auto overflow-y-auto min-h-screen">
         {activeTab === 'home' && (
           <HomeView
-            streak={streak}
-            dailyLogs={dailyLogs}
-            toggleLogging={() => toggleModal('logging', true)}
+            streak={{ current: totalStreak, best: bestStreak, todayProgress }}
+            hasCheckedInToday={hasCheckedInToday}
+            checkInStreak={checkInStreak}
+            onCheckIn={() => setShowCheckIn(true)}
             goals={displayGoals}
             openGoalCreator={openGoalCreator}
             loading={goalsLoading}
+            logs={logs}
           />
         )}
 
-        {activeTab === 'insights' && <InsightsView logs={dailyLogs} />}
+        {activeTab === 'insights' && <InsightsView goals={displayGoals} logs={logs} checkInStreak={checkInStreak} />}
 
         {activeTab === 'tools' && (
           <ToolsView
             startSituation={() => setFreezeFlow({ step: 'checkin', timer: 0, technique: TECHNIQUES[0] })}
-            startRedlight={() => toggleModal('redlight', true)}
           />
         )}
 
@@ -272,21 +342,22 @@ export default function BrainFreezeApp() {
         {activeTab === 'settings' && (
           <SettingsView
             email={user?.email || ''}
-            onReset={() => toggleModal('resetConfirm', true)}
+            preferences={preferences}
             onLogout={handleLogout}
           />
         )}
       </main>
 
       {/* MODALS */}
-      {modals.logging && (
-        <LoggingModal
-          onClose={() => toggleModal('logging', false)}
-          form={logForm}
-          setForm={setLogForm}
-          onSave={handleSaveLog}
-        />
-      )}
+      <AnimatePresence>
+        {showCheckIn && goals.length > 0 && (
+          <DailyCheckInModal
+            onClose={() => setShowCheckIn(false)}
+            onComplete={handleCheckInComplete}
+            goals={goals}
+          />
+        )}
+      </AnimatePresence>
 
       {freezeFlow.step && (
         <FreezeFlowOverlay
@@ -317,8 +388,29 @@ export default function BrainFreezeApp() {
 
 // --- VIEW COMPONENTS ---
 
-const HomeView = ({ streak, dailyLogs, toggleLogging, goals, openGoalCreator, loading }: any) => (
+const HomeView = ({ streak, hasCheckedInToday, checkInStreak, onCheckIn, goals, openGoalCreator, loading, logs }: any) => (
   <div className="space-y-8 max-w-5xl mx-auto">
+    {/* Check-in CTA if not done */}
+    {!hasCheckedInToday && goals.length > 0 && (
+      <motion.button
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        onClick={onCheckIn}
+        className="w-full p-6 rounded-2xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/40 flex items-center justify-between group hover:from-cyan-500/30 hover:to-blue-500/30 transition-all"
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-cyan-500/20 flex items-center justify-center">
+            <Snowflake className="text-cyan-400" size={24} />
+          </div>
+          <div className="text-left">
+            <p className="font-bold text-white">Daily Check-in</p>
+            <p className="text-sm text-slate-400">How did you do today?</p>
+          </div>
+        </div>
+        <ArrowRight className="text-cyan-400 group-hover:translate-x-1 transition-transform" size={24} />
+      </motion.button>
+    )}
+
     {/* Desktop grid layout */}
     <div className="lg:grid lg:grid-cols-2 lg:gap-8">
       {/* Left column */}
@@ -343,7 +435,10 @@ const HomeView = ({ streak, dailyLogs, toggleLogging, goals, openGoalCreator, lo
               <p className="text-slate-400 font-medium mt-1">Day Streak</p>
             </div>
             <div className="flex-1 space-y-3">
-              <p className="text-sm text-slate-300">Best: {streak.best} days</p>
+              <div className="flex items-center gap-2">
+                <Flame className="text-orange-400" size={16} />
+                <p className="text-sm text-slate-300">Best: {streak.best} days</p>
+              </div>
               <div className="h-3 bg-slate-800/80 rounded-full overflow-hidden shadow-inner">
                 <motion.div 
                   initial={{ width: 0 }}
@@ -352,49 +447,30 @@ const HomeView = ({ streak, dailyLogs, toggleLogging, goals, openGoalCreator, lo
                   className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 rounded-full" 
                 />
               </div>
-              <p className="text-xs text-slate-500">{streak.todayProgress}% daily progress</p>
+              <p className="text-xs text-slate-500">
+                {hasCheckedInToday ? '✅ Checked in today' : '⏳ Waiting for check-in'}
+              </p>
             </div>
           </div>
         </motion.div>
 
-        {/* Daily Check-ins - Enhanced */}
+        {/* Check-in Streak Card */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-6 rounded-3xl bg-slate-900/60 border border-slate-700/40 backdrop-blur-xl"
+          className="p-5 rounded-2xl bg-slate-900/60 border border-slate-700/40 backdrop-blur-xl flex items-center gap-4"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-bold text-white">Daily Check-ins</h3>
-              <p className="text-sm text-slate-400">Track your mood 3x / day</p>
-            </div>
-            <span className="text-cyan-400 font-bold text-lg">{dailyLogs.length}/3</span>
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 flex items-center justify-center">
+            <Calendar className="text-green-400" size={24} />
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            {[0, 1, 2].map((index) => {
-              const log = dailyLogs[index];
-              const isLocked = index > dailyLogs.length;
-              return (
-                <motion.button
-                  key={index}
-                  whileHover={{ scale: !log && !isLocked ? 1.05 : 1 }}
-                  whileTap={{ scale: !log && !isLocked ? 0.95 : 1 }}
-                  onClick={() => !log && !isLocked && toggleLogging()}
-                  className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-2 transition-all ${log ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-cyan-500/40 text-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.15)]' : isLocked ? 'bg-slate-900/30 border border-slate-800 text-slate-700' : 'bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-cyan-500/50 hover:text-white hover:bg-slate-800 cursor-pointer'}`}
-                >
-                  {log ? (
-                    <>
-                      {log.mood === 'great' && <Smile size={28} className="text-green-400" />}
-                      {log.mood === 'okay' && <Meh size={28} className="text-yellow-400" />}
-                      {log.mood === 'struggling' && <Frown size={28} className="text-red-400" />}
-                      <span className="text-xs font-medium">{log.time}</span>
-                    </>
-                  ) : isLocked ? <Clock size={24} /> : <Plus size={24} />}
-                </motion.button>
-              );
-            })}
+          <div className="flex-1">
+            <p className="font-bold text-white">{checkInStreak} Day Check-in Streak</p>
+            <p className="text-xs text-slate-400">Keep logging daily for rewards</p>
           </div>
+          {checkInStreak >= 7 && (
+            <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">🧊 Freeze Token</span>
+          )}
         </motion.div>
       </div>
 
@@ -406,89 +482,162 @@ const HomeView = ({ streak, dailyLogs, toggleLogging, goals, openGoalCreator, lo
         className="space-y-4 mt-8 lg:mt-0"
       >
         <div className="flex items-baseline justify-between">
-          <h3 className="text-lg font-bold text-white">Start a New Goal</h3>
+          <h3 className="text-lg font-bold text-white">Your Goals</h3>
           <span className="text-sm text-slate-400">{goals.length} active</span>
         </div>
         
         {loading ? (
           <div className="text-center py-8 text-slate-400">Loading goals...</div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            {GOAL_TEMPLATES.map((template, i) => {
-              const isActive = goals.some((g: any) => g.goal_id === template.id);
-              return (
+        ) : goals.length === 0 ? (
+          <div className="space-y-4">
+            <p className="text-slate-400 text-sm">Start your first goal:</p>
+            <div className="grid grid-cols-2 gap-3">
+              {GOAL_TEMPLATES.slice(0, 4).map((template) => (
                 <motion.button
                   key={template.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.05 * i }}
-                  whileHover={{ scale: isActive ? 1 : 1.03 }}
-                  whileTap={{ scale: isActive ? 1 : 0.97 }}
-                  onClick={() => !isActive && openGoalCreator(template)}
-                  className={`p-5 rounded-2xl border transition-all flex flex-col gap-3 relative overflow-hidden ${isActive ? 'bg-slate-900/40 border-green-500/40 opacity-70' : `cursor-pointer bg-slate-900/60 backdrop-blur-lg hover:bg-slate-800/60 ${template.border}`}`}
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => openGoalCreator(template)}
+                  className={`p-4 rounded-xl border cursor-pointer bg-slate-900/60 backdrop-blur-lg hover:bg-slate-800/60 ${template.border} flex items-center gap-3`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className={`p-2 rounded-xl ${template.bg}`}>
-                      <template.icon className={template.color} size={22} />
-                    </div>
-                    {isActive && <span className="text-xs text-green-400 font-semibold bg-green-500/10 px-2 py-0.5 rounded-full">Active</span>}
-                  </div>
-                  <span className="text-sm font-semibold text-white">{template.title}</span>
+                  <template.icon className={template.color} size={20} />
+                  <span className="text-sm font-medium text-white">{template.title}</span>
                 </motion.button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {goals.slice(0, 3).map((goal: any) => {
+              const IconComponent = goal.icon;
+              return (
+                <motion.div
+                  key={goal.id}
+                  whileHover={{ scale: 1.01 }}
+                  className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-4"
+                >
+                  <div className={`p-2.5 rounded-lg bg-slate-800 ${goal.color}`}>
+                    <IconComponent size={20} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-white text-sm">{goal.title}</p>
+                    <p className="text-xs text-slate-500">{goal.lastRelapse || 'Just started'}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xl font-bold text-cyan-400">{goal.streak}</p>
+                    <p className="text-xs text-slate-500">days</p>
+                  </div>
+                </motion.div>
               );
             })}
+            {goals.length > 3 && (
+              <p className="text-center text-sm text-slate-500">+{goals.length - 3} more goals</p>
+            )}
           </div>
         )}
       </motion.div>
     </div>
   </div>
 );
-const InsightsView = ({ logs }: any) => (
-  <div className="space-y-8">
-    <div className="flex items-baseline justify-between">
-      <h2 className="text-2xl font-bold text-white">INSIGHTS</h2>
-      <span className="text-sm text-slate-400">Performance Metrics</span>
-    </div>
 
-    <div className="p-6 rounded-2xl bg-slate-900/50 border border-cyan-500/20 backdrop-blur-lg">
-      <div className="flex items-baseline justify-between mb-4">
-        <div>
-          <p className="text-sm text-slate-400">Clarity Index CIX</p>
-          <p className="text-3xl font-bold text-cyan-400">{CHART_DATA[CHART_DATA.length - 1].toFixed(2)} <span className="text-sm text-green-400">+15.4%</span></p>
-        </div>
-        <span className="text-xs text-slate-500">24h</span>
+const InsightsView = ({ goals, logs, checkInStreak }: any) => {
+  // Calculate stats
+  const totalDaysTracked = logs.length;
+  const avgMood = logs.length > 0 
+    ? (logs.reduce((sum: number, l: any) => sum + (l.mood_score || 0), 0) / logs.length).toFixed(1)
+    : 0;
+  const bestStreak = goals.reduce((max: number, g: any) => Math.max(max, g.best_streak || g.streak), 0);
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-2xl font-bold text-white">Insights</h2>
+        <span className="text-sm text-slate-400">Your Progress</span>
       </div>
-      <svg viewBox="0 0 300 150" className="w-full h-32">
-        <defs>
-          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d={`M 0 150 ${CHART_DATA.map((val, i) => `L ${i * (300 / (CHART_DATA.length - 1))} ${150 - (val / 100) * 150}`).join(' ')} L 300 150 Z`} fill="url(#chartGradient)" />
-        <path d={`M 0 ${150 - (CHART_DATA[0] / 100) * 150} ${CHART_DATA.map((val, i) => `L ${i * (300 / (CHART_DATA.length - 1))} ${150 - (val / 100) * 150}`).join(' ')}`} fill="none" stroke="#22d3ee" strokeWidth="2" />
-      </svg>
-    </div>
 
-    <div className="space-y-4">
-      <h3 className="text-lg font-bold text-white">Log History</h3>
-      <div className="space-y-3">
-        {logs.map((log: any) => (
-          <div key={log.id} className="p-4 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-4">
-            {log.mood === 'great' && <Smile className="text-green-400" />}
-            {log.mood === 'okay' && <Meh className="text-yellow-400" />}
-            {log.mood === 'struggling' && <Frown className="text-red-400" />}
-            <div>
-              <p className="font-medium text-white capitalize">{log.mood}</p>
-              <p className="text-xs text-slate-500">{log.time}</p>
-            </div>
-            <p className="ml-auto text-sm text-slate-400">"{log.note}"</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard icon={Calendar} label="Days Tracked" value={totalDaysTracked} color="text-cyan-400" />
+        <StatCard icon={Flame} label="Best Streak" value={`${bestStreak} days`} color="text-orange-400" />
+        <StatCard icon={TrendingUp} label="Check-in Streak" value={`${checkInStreak} days`} color="text-green-400" />
+        <StatCard icon={Smile} label="Avg Mood" value={`${avgMood}/5`} color="text-yellow-400" />
+      </div>
+
+      {/* Goals Progress */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-white">Goal Progress</h3>
+        {goals.length === 0 ? (
+          <p className="text-slate-400">No goals yet. Start one to see insights!</p>
+        ) : (
+          <div className="space-y-3">
+            {goals.map((goal: any) => {
+              const IconComponent = goal.icon;
+              const progress = goal.target ? Math.min(100, (goal.streak / parseInt(goal.target)) * 100) : (goal.streak / 30) * 100;
+              return (
+                <div key={goal.id} className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg bg-slate-800 ${goal.color}`}>
+                      <IconComponent size={18} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium text-white text-sm">{goal.title}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-cyan-400 font-bold">{goal.streak}</span>
+                      <span className="text-slate-500 text-sm"> / {goal.target || 30}</span>
+                    </div>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, progress)}%` }}
+                      className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* Recent Check-ins */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-white">Recent Check-ins</h3>
+        {logs.length === 0 ? (
+          <p className="text-slate-400">No check-ins yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {logs.slice(0, 7).map((log: any) => (
+              <div key={log.id} className="p-3 rounded-lg bg-slate-900/30 border border-slate-800 flex items-center gap-3">
+                <MoodIcon score={log.mood_score} />
+                <div className="flex-1">
+                  <p className="text-sm text-white">{new Date(log.log_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                  {log.reflection && <p className="text-xs text-slate-500 truncate">{log.reflection}</p>}
+                </div>
+                <span className="text-xs text-slate-500">{log.energy_level}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
+  );
+};
+
+const StatCard = ({ icon: Icon, label, value, color }: any) => (
+  <div className="p-4 rounded-xl bg-slate-900/50 border border-slate-800">
+    <Icon className={`${color} mb-2`} size={24} />
+    <p className="text-2xl font-bold text-white">{value}</p>
+    <p className="text-xs text-slate-500">{label}</p>
   </div>
 );
+
+const MoodIcon = ({ score }: { score: number }) => {
+  if (score >= 4) return <Smile className="text-green-400" size={20} />;
+  if (score >= 3) return <Meh className="text-yellow-400" size={20} />;
+  return <Frown className="text-red-400" size={20} />;
+};
 
 const ToolsView = ({ startSituation }: any) => (
   <div className="space-y-8">
@@ -527,7 +676,7 @@ const ToolsView = ({ startSituation }: any) => (
 const GoalsView = ({ goals, loading, onReset }: any) => (
   <div className="space-y-6">
     <div className="flex items-baseline justify-between">
-      <h2 className="text-2xl font-bold text-white">GOALS</h2>
+      <h2 className="text-2xl font-bold text-white">Goals</h2>
       <span className="text-sm text-slate-400">Active Commitments</span>
     </div>
 
@@ -542,6 +691,7 @@ const GoalsView = ({ goals, loading, onReset }: any) => (
       <div className="space-y-4">
         {goals.map((goal: any) => {
           const IconComponent = goal.icon;
+          const freezeTokens = (goal as any).freeze_tokens || 0;
           return (
             <div key={goal.id} className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 backdrop-blur-lg">
               <div className="flex items-start gap-4">
@@ -551,14 +701,22 @@ const GoalsView = ({ goals, loading, onReset }: any) => (
                 <div className="flex-1">
                   <h3 className="font-bold text-white">{goal.title}</h3>
                   {goal.reason && <p className="text-sm text-slate-400 mt-1">{goal.reason}</p>}
+                  {freezeTokens > 0 && (
+                    <div className="flex items-center gap-1 mt-2">
+                      {Array.from({ length: freezeTokens }).map((_, i) => (
+                        <Snowflake key={i} className="text-cyan-400" size={14} />
+                      ))}
+                      <span className="text-xs text-slate-500 ml-1">{freezeTokens} freeze tokens</span>
+                    </div>
+                  )}
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-cyan-400">{goal.streak}</p>
-                  <p className="text-xs text-slate-500">Days Clean</p>
+                  <p className="text-3xl font-bold text-cyan-400">{goal.streak}</p>
+                  <p className="text-xs text-slate-500">Days</p>
                 </div>
               </div>
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-slate-500">Last: {goal.lastRelapse}</span>
+                <span className="text-xs text-slate-500">Last: {goal.lastRelapse || 'Never'}</span>
                 <button onClick={() => onReset(goal.id)} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
                   <Trash2 size={14} /> Reset
                 </button>
@@ -571,7 +729,7 @@ const GoalsView = ({ goals, loading, onReset }: any) => (
   </div>
 );
 
-const SettingsView = ({ email, onLogout }: any) => (
+const SettingsView = ({ email, preferences, onLogout }: any) => (
   <div className="space-y-8">
     <h2 className="text-2xl font-bold text-white">Settings</h2>
 
@@ -579,6 +737,33 @@ const SettingsView = ({ email, onLogout }: any) => (
       <h3 className="font-bold text-white mb-2">Account</h3>
       <p className="text-slate-400">{email}</p>
     </div>
+
+    {preferences && (
+      <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4">
+        <h3 className="font-bold text-white">Preferences</h3>
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-slate-400">Check-in time</span>
+            <span className="text-white">{preferences.preferred_check_in_time}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400">Risk times</span>
+            <span className="text-white">{preferences.risk_times?.join(', ') || 'Not set'}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400">Notifications</span>
+            <span className="text-white">{preferences.notification_enabled ? 'Enabled' : 'Disabled'}</span>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {preferences?.primary_motivation && (
+      <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800">
+        <h3 className="font-bold text-white mb-2">Your Motivation</h3>
+        <p className="text-slate-400 text-sm italic">"{preferences.primary_motivation}"</p>
+      </div>
+    )}
 
     <button onClick={onLogout} className="w-full p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-medium flex items-center justify-center gap-2 hover:bg-red-500/20 transition-colors">
       <LogOut size={20} />
@@ -588,33 +773,6 @@ const SettingsView = ({ email, onLogout }: any) => (
 );
 
 // --- MODAL COMPONENTS ---
-
-const LoggingModal = ({ onClose, form, setForm, onSave }: any) => (
-  <div className="fixed inset-0 z-[60] flex flex-col bg-[#0B1120] text-white p-6">
-    <div className="flex items-center justify-between mb-8">
-      <h2 className="text-xl font-bold">Daily Check-In</h2>
-      <button onClick={onClose} className="p-2 bg-slate-800 rounded-full text-slate-400"><X size={20} /></button>
-    </div>
-    <div className="flex-1 space-y-6">
-      <div className="space-y-3">
-        <label className="text-sm font-bold text-slate-300 uppercase tracking-wide">Mood</label>
-        <div className="flex gap-3">
-          {MOOD_OPTIONS.map((m) => (
-            <button key={m.value} onClick={() => setForm({ ...form, mood: m.value })} className={`flex-1 py-6 rounded-xl border flex flex-col items-center gap-2 transition-all ${form.mood === m.value ? 'bg-slate-800 border-cyan-500 text-white' : 'bg-slate-900/50 border-slate-800 text-slate-500'}`}>
-              <m.icon size={28} className={form.mood === m.value ? m.color : ''} />
-              <span className="text-sm">{m.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="space-y-3">
-        <label className="text-sm font-bold text-slate-300 uppercase tracking-wide">Notes</label>
-        <textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Thoughts?" className="w-full bg-slate-900 border border-slate-800 rounded-xl p-4 text-sm text-white focus:outline-none focus:border-cyan-500 h-32 resize-none" />
-      </div>
-    </div>
-    <button onClick={onSave} disabled={!form.mood} className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-white font-bold disabled:opacity-50">Save</button>
-  </div>
-);
 
 const GoalCreationModal = ({ template, form, setForm, onClose, onSave }: any) => (
   <div className="fixed inset-0 z-[60] flex flex-col bg-[#0B1120] text-white p-6">
@@ -634,8 +792,8 @@ const GoalCreationModal = ({ template, form, setForm, onClose, onSave }: any) =>
         <textarea value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} placeholder="My reason is..." className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-cyan-500 h-28 resize-none" />
       </div>
       <div className="space-y-3">
-        <label className="text-sm font-bold text-slate-300 uppercase tracking-wide">Target?</label>
-        <input type="text" value={form.target} onChange={(e) => setForm({ ...form, target: e.target.value })} placeholder="e.g., 30 days" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-cyan-500" />
+        <label className="text-sm font-bold text-slate-300 uppercase tracking-wide">Target (days)?</label>
+        <input type="text" value={form.target} onChange={(e) => setForm({ ...form, target: e.target.value })} placeholder="e.g., 30" className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 text-white focus:outline-none focus:border-cyan-500" />
       </div>
     </div>
     <button onClick={onSave} disabled={!form.reason} className="w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl text-white font-bold disabled:opacity-50 mb-6 shadow-lg">Commit</button>

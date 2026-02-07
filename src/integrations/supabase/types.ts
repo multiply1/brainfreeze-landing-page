@@ -14,17 +14,94 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_logs: {
+        Row: {
+          check_in_time: string | null
+          created_at: string
+          energy_level: string | null
+          id: string
+          log_date: string
+          mood_score: number | null
+          reflection: string | null
+          user_id: string
+        }
+        Insert: {
+          check_in_time?: string | null
+          created_at?: string
+          energy_level?: string | null
+          id?: string
+          log_date?: string
+          mood_score?: number | null
+          reflection?: string | null
+          user_id: string
+        }
+        Update: {
+          check_in_time?: string | null
+          created_at?: string
+          energy_level?: string | null
+          id?: string
+          log_date?: string
+          mood_score?: number | null
+          reflection?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      goal_events: {
+        Row: {
+          created_at: string
+          event_date: string
+          event_type: string
+          goal_id: string
+          id: string
+          metadata: Json | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string
+          event_type: string
+          goal_id: string
+          id?: string
+          metadata?: Json | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string
+          event_type?: string
+          goal_id?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goal_events_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "user_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_goals: {
         Row: {
+          best_streak: number | null
+          check_in_status: string | null
           color: string | null
           created_at: string
+          difficulty: string | null
+          freeze_tokens: number | null
           goal_id: string
           icon: string | null
           id: string
+          last_check_in_date: string | null
           last_relapse: string | null
           reason: string | null
           status: string
           streak: number
+          streak_start_date: string | null
           target: string | null
           title: string
           type: string
@@ -32,15 +109,21 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          best_streak?: number | null
+          check_in_status?: string | null
           color?: string | null
           created_at?: string
+          difficulty?: string | null
+          freeze_tokens?: number | null
           goal_id: string
           icon?: string | null
           id?: string
+          last_check_in_date?: string | null
           last_relapse?: string | null
           reason?: string | null
           status?: string
           streak?: number
+          streak_start_date?: string | null
           target?: string | null
           title: string
           type?: string
@@ -48,18 +131,63 @@ export type Database = {
           user_id: string
         }
         Update: {
+          best_streak?: number | null
+          check_in_status?: string | null
           color?: string | null
           created_at?: string
+          difficulty?: string | null
+          freeze_tokens?: number | null
           goal_id?: string
           icon?: string | null
           id?: string
+          last_check_in_date?: string | null
           last_relapse?: string | null
           reason?: string | null
           status?: string
           streak?: number
+          streak_start_date?: string | null
           target?: string | null
           title?: string
           type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          notification_enabled: boolean | null
+          onboarding_completed: boolean | null
+          preferred_check_in_time: string | null
+          primary_motivation: string | null
+          risk_times: string[] | null
+          timezone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notification_enabled?: boolean | null
+          onboarding_completed?: boolean | null
+          preferred_check_in_time?: string | null
+          primary_motivation?: string | null
+          risk_times?: string[] | null
+          timezone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notification_enabled?: boolean | null
+          onboarding_completed?: boolean | null
+          preferred_check_in_time?: string | null
+          primary_motivation?: string | null
+          risk_times?: string[] | null
+          timezone?: string | null
           updated_at?: string
           user_id?: string
         }

@@ -42,8 +42,8 @@ const Index = () => {
       }} transition={{
         duration: 0.8,
         delay: 0.3
-      }} className="text-center mb-6">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+      }} className="text-left mb-6 w-full max-w-7xl px-4">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black tracking-tight leading-none uppercase drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
             <span className="bg-gradient-to-b from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent">
               Mental cold shock
             </span>
@@ -64,7 +64,7 @@ const Index = () => {
       }} transition={{
         duration: 0.8,
         delay: 0.5
-      }} className="mb-16 text-center text-lg md:text-2xl text-cyan-50 max-w-2xl font-light tracking-wide drop-shadow-md">Your mental cold shock.
+      }} className="mb-16 text-left text-lg md:text-xl text-cyan-50 w-full max-w-7xl px-4 font-light tracking-wide drop-shadow-md">Your mental cold shock.
         <br />
           Freeze the chaos. Build the clarity.
         </motion.p>
@@ -79,25 +79,33 @@ const Index = () => {
       }} transition={{
         duration: 0.8,
         delay: 0.7
-      }} className="mb-32 flex flex-col md:flex-row items-center justify-center gap-10">
-          {/* Button 1: Download Now (Jäinen iso nappi) */}
-          <Link to="/app" className="relative group flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95" style={{
-          backgroundImage: `url("${btnBg}")`,
-          width: '280px',
-          height: '90px'
+      }} className="mb-32 flex flex-col md:flex-row items-start justify-start gap-6 w-full max-w-7xl px-4">
+          {/* Button 1: Start Now */}
+          <Link to="/app" className="relative group flex items-center justify-center transition-transform hover:scale-105 active:scale-95 overflow-hidden rounded-xl" style={{
+          width: '240px',
+          height: '80px'
         }}>
-            <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] pb-3">
+            <img 
+              src={btnBg} 
+              alt="" 
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               Start Now
             </span>
           </Link>
 
-          {/* Button 2: Explore Routines (Pitkä palkki) */}
-          <button className="relative group flex items-center justify-center bg-center bg-no-repeat bg-contain transition-transform hover:scale-105 active:scale-95 opacity-90 hover:opacity-100" style={{
-          backgroundImage: `url("${navBg}")`,
-          width: '280px',
-          height: '70px'
+          {/* Button 2: Explore Routines */}
+          <button className="relative group flex items-center justify-center transition-transform hover:scale-105 active:scale-95 opacity-90 hover:opacity-100 overflow-hidden rounded-xl" style={{
+          width: '240px',
+          height: '60px'
         }}>
-            <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] pb-2">
+            <img 
+              src={navBg} 
+              alt="" 
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <span className="relative z-10 text-sm font-black text-white tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
               Explore Routines
             </span>
           </button>

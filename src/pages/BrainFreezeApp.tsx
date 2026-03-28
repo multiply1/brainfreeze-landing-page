@@ -220,7 +220,7 @@ export default function BrainFreezeApp() {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (freezeFlow.step === 'intervention' && freezeFlow.timer > 0) {
       interval = setInterval(() => {
         setFreezeFlow(prev => {
